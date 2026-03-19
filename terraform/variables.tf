@@ -17,3 +17,7 @@ variable "ami_id" {
   description = "Amazon Machine Image ID for EC2"
   default     = "ami-0c02fb55956c7d316"
 }
+
+variable "ssh_public_key" {
+  description = "SSH public key for EC2 access"
+}

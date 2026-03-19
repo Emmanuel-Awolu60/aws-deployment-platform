@@ -96,7 +96,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 
 resource "aws_key_pair" "deployer" {
   key_name   = "${var.project_name}-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = var.ssh_public_key
 }
 
 resource "aws_instance" "app" {
