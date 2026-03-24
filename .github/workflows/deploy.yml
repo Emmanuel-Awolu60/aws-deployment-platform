@@ -129,7 +129,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ec2-user/monitoring
-            sudo docker-compose up -ds
+            sudo /usr/local/bin/docker-compose up -d
 
   health-check:
     runs-on: ubuntu-latest
