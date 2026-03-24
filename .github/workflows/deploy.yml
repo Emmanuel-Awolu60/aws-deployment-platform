@@ -96,7 +96,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -114,6 +113,23 @@ jobs:
               -p 3000:3000 \
               -e GIT_COMMIT_SHA=${{ needs.build.outputs.image_tag }} \
               ${{ secrets.ECR_REPOSITORY_URL }}:${{ needs.build.outputs.image_tag }}
+      - name: Copy monitoring files to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ needs.terraform.outputs.ec2_ip }}
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "monitoring/"
+          target: "/home/ec2-user/"
+      - name: Deploy monitoring
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ needs.terraform.outputs.ec2_ip }}
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/ec2-user/monitoring
+            sudo docker-compose up -ds
 
   health-check:
     runs-on: ubuntu-latest

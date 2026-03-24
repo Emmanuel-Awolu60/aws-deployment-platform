@@ -2,7 +2,9 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
 const GIT_COMMIT_SHA = process.env.GIT_COMMIT_SHA || 'development'
-
+const promClient = require('prom-client')
+const collectDefaultMetrics = promClient.collectDefaultMetrics
+collectDefaultMetrics()
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' })
@@ -19,6 +21,11 @@ app.get('/items', (req, res) => {
     { id: 3, name: 'Item Three' }
   ]
   res.status(200).json({ items })
+})
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', promClient.register.contentType)
+  res.send(await promClient.register.metrics())
 })
 
 app.listen(PORT, () => {
