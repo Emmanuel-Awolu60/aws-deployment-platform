@@ -104,9 +104,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URL }}
-            docker pull ${{ secrets.ECR_REPOSITORY_URL }}:${{ needs.build.outputs.image_tag }}
-            docker stop app || true
-            docker rm app || true
+            sudo docker pull ${{ secrets.ECR_REPOSITORY_URL }}:${{ needs.build.outputs.image_tag }}
+            sudo docker stop app || true
+            sudo docker rm app || true
             docker run -d \
               --name app \
               --restart unless-stopped \
